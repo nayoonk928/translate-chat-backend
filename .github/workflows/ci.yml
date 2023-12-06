@@ -30,7 +30,11 @@ jobs:
           OCCUPY_SECRET_DIR: src/main/resources
           OCCUPY_SECRET_TEST_DIR: src/test/resources
           OCCUPY_SECRET_DIR_FILE_NAME: application-secret.yml
-        run: echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME &&
+        run: |
+          mkdir -p $OCCUPY_SECRET_DIR
+          mkdir -p $OCCUPY_SECRET_TEST_DIR
+          
+          echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME &&
           echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_TEST_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
 
       - name: Grant execute permission for gradlew
@@ -42,7 +46,7 @@ jobs:
           echo "${{ secrets.APPLICATION }}" > src/main/resources/application-local.yml
           cat ./src/main/resources/application-local.yml
 
-      - name: Gradle 빌드
+      - name: Gradle Build
         run: ./gradlew clean build --exclude-task test
 
   # JUnit 테스트
@@ -65,8 +69,12 @@ jobs:
           OCCUPY_SECRET_DIR: src/main/resources
           OCCUPY_SECRET_TEST_DIR: src/test/resources
           OCCUPY_SECRET_DIR_FILE_NAME: application-secret.yml
-        run: echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME &&
-            echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_TEST_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
+        run: |
+          mkdir -p $OCCUPY_SECRET_DIR
+          mkdir -p $OCCUPY_SECRET_TEST_DIR
+          
+          echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME &&
+          echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_TEST_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
 
       - name: Set up yml
         run: |
@@ -80,13 +88,13 @@ jobs:
       - name: Run test
         run: ./gradlew --info test
 
-      - name: 테스트 결과 PR에 등록
+      - name: Publish JUnit Test Result
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: '**/build/test-results/**/*.xml'
 
-      - name: 테스트 실패 코멘트 등록
+      - name: Comment on Test Failures
         uses: mikepenz/action-junit-report@v4
         if: always()
         with:
