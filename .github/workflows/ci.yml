@@ -8,6 +8,8 @@ on:
     branches:
       - develop
 
+permissions: write-all
+
 jobs:
   # 빌드 테스트
   build:
