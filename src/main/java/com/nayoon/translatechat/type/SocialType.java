@@ -3,7 +3,7 @@ package com.nayoon.translatechat.type;
 import lombok.Getter;
 
 @Getter
-public enum Provider {
+public enum SocialType {
 
   GOOGLE, NAVER, KAKAO
 
